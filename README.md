@@ -3,7 +3,7 @@
 Sistema de clasificación automática de cajas por altura,
 programado en lógica escalera con CODESYS.
 
-## Qué hace
+## ¿Qué hace?
 
 EL sistema ayuda a optimizar la clasificación de caja en una linea de producción, asegurándose que no midan menos de 59 centímetros ni mas de 61 centímetros, para asegurar un control de calidad. 
 
