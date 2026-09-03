@@ -1,0 +1,121 @@
+Banda clasificadora por altura — Descripción funcional
+> **Instrucciones:** todo lo que está entre corchetes lo escribes tú.
+> Borra estas instrucciones y los corchetes antes de publicar.
+> Escribe en pasado o presente, pero sé consistente.
+---
+1. Descripción del proceso
+[Un párrafo en lenguaje llano, sin tecnicismos, para que lo entienda
+alguien que no es ingeniero. Qué transporta la banda, qué se verifica,
+qué pasa con las piezas que no cumplen. Tres o cuatro oraciones.]
+Plataforma: CODESYS V3.5, lenguaje escalera (LD), simulado en CODESYS Control Win V3.
+---
+2. Lista de señales
+Entradas digitales (8)
+Variable	Tipo	Descripción
+`sensor_abajo`	BOOL	[qué detecta]
+`sensor_59`	BOOL	[qué detecta]
+`sensor_61`	BOOL	[qué detecta]
+`btn_arranque`	BOOL	[pulsador NA]
+`btn_paro`	BOOL	[pulsador NC]
+`paro_emergencia`	BOOL	[pulsador NC — señal TRUE en reposo]
+`btn_rearranque`	BOOL	[qué confirma]
+`piston_retraido`	BOOL	[sensor de posición]
+Salidas digitales (6)
+Variable	Tipo	Descripción
+`motor`	BOOL	[qué energiza — recordar que va a un contactor]
+`piston`	BOOL	[electroválvula]
+`lampara_verde`	BOOL	[según IEC 60204-1: ...]
+`lampara_amarilla`	BOOL	[...]
+`lampara_azul`	BOOL	[...]
+`lampara_roja`	BOOL	[...]
+`alarma`	BOOL	[dos patrones sobre una sola salida]
+> Nota: son 7 filas y dije 6 salidas. Cuéntalas y corrige el número
+> o la lista. Este tipo de inconsistencia es lo que un revisor detecta primero.
+Variables internas
+[Lista: banderas, contadores, temporizadores, detectores de flanco.
+Agrupa por tipo y explica qué representa cada una.]
+Dimensionamiento: con [N] entradas y [N] salidas físicas, y aplicando
+la reserva del 20% que se acostumbra para cambios futuros, el PLC
+requerido sería de al menos [N]/[N].
+---
+3. Criterio de clasificación
+La pieza se considera conforme cuando su altura queda dentro de la
+ventana de tolerancia definida por los dos sensores superiores.
+`sensor_abajo`	`sensor_59`	`sensor_61`	Resultado
+			
+[Llena las cuatro combinaciones relevantes y su resultado.]
+Expresado como lógica booleana:
+```
+pieza_buena = [tu expresión]
+pieza_mala  = [tu expresión]
+```
+[Un párrafo explicando por qué se define lo bueno y todo lo demás
+es rechazo, en lugar de enumerar cada forma de estar mal.]
+---
+4. Secuencia de operación
+[Numerada, en orden. Base: la que ya escribiste, corregida con lo que
+aprendimos. Debe incluir arranque con aviso previo, movimiento de banda,
+detección, disparo del pistón con su retardo, retracción, conteo,
+paro por lote lleno y confirmación del operador.]
+
+
+
+Parámetros de tiempo:
+Parámetro	Valor	Justificación
+Aviso previo al arranque		
+Retardo de disparo del pistón		[relación velocidad × tiempo = distancia]
+Duración de extensión del pistón		
+Duración de la alarma de rechazo		
+Tamaño de lote		
+---
+5. Condiciones de paro y seguridad
+[Qué detiene la máquina, qué ocurre con cada salida al detenerse, y
+cómo se reanuda la operación.]
+Jerarquía de protección:
+[El párrafo sobre hardware vs software. El paro de emergencia se cablea
+en serie con la alimentación; el PLC solo lo lee para informar el estado.]
+Rearranque:
+[Por qué la máquina no arranca sola al liberar el paro de emergencia, y
+por qué eso es deseable.]
+---
+6. Señalización
+[Tabla de las lámparas con su significado según IEC 60204-1 y qué estado
+del sistema representa cada una. Incluye por qué el rechazo de pieza NO
+usa la lámpara roja.]
+---
+7. Limitaciones conocidas
+> Esta sección es la más valiosa del documento. Escríbela completa.
+7.1 Solapamiento de piezas
+[El ciclo de rechazo dura X ms. A 1 m/s, esto exige una separación
+mínima de X cm entre piezas. Qué pasa si llegan más juntas y por qué.
+Mejora futura: registro de desplazamiento.]
+7.2 Conteo de detectadas vs. expulsadas
+[El contador cuenta detecciones, no expulsiones confirmadas. Qué
+implicaría una discrepancia entre ambas cuentas y cómo se aprovecharía
+como diagnóstico.]
+7.3 Comportamiento del pistón ante paro de emergencia
+[El hallazgo de la prueba 8: por qué el ciclo continúa, cómo se corrige
+en software, y por qué la protección real es por hardware.]
+7.4 Conteo inicial con sensor ocupado
+[El contador opera por flanco; una pieza ya presente al arrancar no se
+cuenta. Se asume banda vacía al inicio.]
+7.5 Paro por lote completo
+[La máquina se detiene cada N piezas. Por qué esto es costoso en
+producción real, qué requeriría el intercambio automático de contenedor,
+y por qué se dejó fuera del alcance.]
+7.6 Retracción por tiempo
+[Se retrae por temporizador y no por confirmación del sensor de posición.
+Qué pasa si el pistón se traba.]
+---
+8. Pruebas realizadas
+#	Prueba	Resultado
+1		
+[Documenta las 8 pruebas del ciclo integral, incluyendo la que reveló
+el comportamiento del pistón ante emergencia. Una prueba que encuentra
+un defecto es más valiosa de reportar que una que pasa.]
+---
+9. Mejoras futuras
+[Consolida aquí lo que salió de las limitaciones: seguimiento de piezas,
+verificación cruzada de conteos, intercambio automático de contenedor,
+confirmación por sensor de posición. Para cada una, una línea de qué
+resuelve y qué requeriría.]
